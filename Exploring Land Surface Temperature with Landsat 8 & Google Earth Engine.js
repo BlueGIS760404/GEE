@@ -23,10 +23,6 @@ var lstVis = {
 Map.centerObject(image, 9);
 Map.addLayer(lst_celsius, lstVis, 'Land Surface Temp (°C)');
 
-// =============================================
-// FINAL WORKING LEGEND SOLUTION
-// =============================================
-
 // Create the legend panel
 var legend = ui.Panel({
   style: {
