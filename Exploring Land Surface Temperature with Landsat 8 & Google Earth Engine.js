@@ -12,10 +12,25 @@ var lst_celsius = image.select('ST_B10')
   .subtract(273.15)
   .rename('LST_Celsius');
 
-// Visualization parameters
+// Define the region of interest (e.g., a small bounding box around the point)
+var region = ee.Geometry.Point([-122.292, 37.901]).buffer(5000).bounds();
+
+// Compute min and max LST values for the region
+var stats = lst_celsius.reduceRegion({
+  reducer: ee.Reducer.minMax(),
+  geometry: region,
+  scale: 30,
+  maxPixels: 1e9
+});
+
+// Extract min and max values (with fallback in case of null values)
+var minTemp = ee.Number(stats.get('LST_Celsius_min')).divide(1).max(0); // Fallback to 0 if null
+var maxTemp = ee.Number(stats.get('LST_Celsius_max')).divide(1).min(100); // Fallback to 100 if null
+
+// Create visualization parameters with dynamic min and max
 var lstVis = {
-  min: 20,
-  max: 40,
+  min: minTemp.getInfo(), // Convert to client-side number
+  max: maxTemp.getInfo(), // Convert to client-side number
   palette: ['blue', 'cyan', 'green', 'yellow', 'red']
 };
 
@@ -41,15 +56,6 @@ legend.add(ui.Label('Land Surface Temp (°C)', {
 }));
 
 // Create color bar container
-var colorBar = ui.Panel({
-  style: {
-    height: '20px',
-    margin: '0 0 4px 0',
-    backgroundColor: 'blue' // Starting color
-  }
-});
-
-// Create the gradient using multiple panels
 var gradientContainer = ui.Panel({
   layout: ui.Panel.Layout.flow('horizontal'),
   style: {height: '20px'}
@@ -58,7 +64,7 @@ var gradientContainer = ui.Panel({
 // Add each color segment
 var colors = lstVis.palette;
 var segmentCount = colors.length;
-colors.forEach(function(color, i) {
+colors.forEach(function(color) {
   gradientContainer.add(ui.Panel({
     style: {
       backgroundColor: color,
@@ -72,14 +78,25 @@ colors.forEach(function(color, i) {
 
 legend.add(gradientContainer);
 
-// Add labels
+// Add dynamic labels based on min and max
 var labels = ui.Panel({
   layout: ui.Panel.Layout.flow('horizontal'),
   style: {margin: '0px'}
 });
 
-[20, 25, 30, 35, 40].forEach(function(temp) {
-  labels.add(ui.Label(temp + '°C', {
+// Generate 5 temperature labels between min and max (client-side)
+var numLabels = 5;
+var minTempVal = lstVis.min;
+var maxTempVal = lstVis.max;
+var step = (maxTempVal - minTempVal) / (numLabels - 1);
+var tempLabels = [];
+for (var i = 0; i < numLabels; i++) {
+  tempLabels.push(minTempVal + step * i);
+}
+
+// Add labels to the panel
+tempLabels.forEach(function(temp) {
+  labels.add(ui.Label(temp.toFixed(1) + '°C', {
     margin: '0 13px 0 0',
     fontSize: '10px'
   }));
