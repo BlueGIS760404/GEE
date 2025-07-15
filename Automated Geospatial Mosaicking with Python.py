@@ -6,9 +6,6 @@ from rasterio.mask import mask
 from rasterio.merge import merge
 from rasterio.crs import CRS
 
-# Set PROJ_LIB to avoid PROJ conflicts (update path as needed)
-os.environ["PROJ_LIB"] = "C:\\Python39\\Lib\\site-packages\\rasterio\\proj_data"  # Adjust to your rasterio or GDAL PROJ path
-
 # Paths
 shapefile_path = "...path\\boundary.shp"
 tiles_dir = "...path\\tiles"  # Directory containing Landsat tiles
