@@ -10,8 +10,8 @@ from rasterio.crs import CRS
 os.environ["PROJ_LIB"] = "C:\\Python39\\Lib\\site-packages\\rasterio\\proj_data"  # Adjust to your rasterio or GDAL PROJ path
 
 # Paths
-shapefile_path = "...path\\tehran_alborz_dissolved_simplified.shp"
-tiles_dir = "...path\\tiles"  # Directory containing Sentinel-2 tiles
+shapefile_path = "...path\\boundary.shp"
+tiles_dir = "...path\\tiles"  # Directory containing Landsat tiles
 output_mosaic_path = "...path\\mosaic_output.tif"
 
 # Initialize lists to avoid NameError
