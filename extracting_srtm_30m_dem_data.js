@@ -26,7 +26,7 @@ var elevationVis = {
 };
 
 // Center the map on the region
-Map.centerObject(roi, 10);
+Map.centerObject(roi, 8);
 
 // Add the clipped elevation layer with a descriptive name
 Map.addLayer(elevationClipped, elevationVis, 'SRTM Elevation (30m)');
